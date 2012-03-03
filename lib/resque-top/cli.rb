@@ -31,10 +31,11 @@ module Resque::Top
       out << ""
 
       out << "Queues: "
+      longest = Resque.queues.map(&:length).max || 0
       Resque.queues.each do |queue|
-        out << "  #{queue} | #{Resque.size(queue)}"
+        out << "  " + queue.ljust(longest) + " | #{Resque.size(queue).to_s.rjust(5)}"
       end
-      out << "  failed | #{Resque::Failure.count}"
+      out << "  " + "failed".ljust(longest) + " | #{Resque::Failure.count.to_s.rjust(5)}"
       out << ""
 
       out << "Workers:"
@@ -54,7 +55,7 @@ module Resque::Top
       end
 
       if workers.empty?
-        out << "There are no registered workers"
+        out << "  (There are no registered workers)"
       end
 
       (@height - out.size - 2).times do out << "" end
