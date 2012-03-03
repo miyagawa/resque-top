@@ -2,6 +2,11 @@
 
 resque-top is a top-like command line utility to display resque queue and worker status, like [resque-web](https://github.com/defunkt/resque).
 
+## Screenshot
+
+![](http://dl.dropbox.com/u/135035/Screenshots/y1tyvv6uihcl.png)
+
+
 ## Installation
 
 ### github
