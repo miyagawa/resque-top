@@ -25,17 +25,46 @@ module Resque::Top
       target << (' ' * (@width - target.length - str.length)) + str
     end
 
+    def tabular(rows, indent=2, separator="|")
+      if rows.empty?
+        nil
+      else
+        longest = [0] * rows[0].count
+        rows.each do |cols|
+          cols.each_with_index do |value, i|
+            longest[i] = [ longest[i], value.to_s.length ].max
+          end
+        end
+        rows.collect do |row|
+          longest.each_with_index do |value, i|
+            row[i] = justify(value, row[i])
+          end
+          (" " * indent) + row.join(" | ")
+        end
+      end
+    end
+
+    def justify(longest, string)
+      if string.is_a?(Integer)
+        string.to_s.rjust(longest)
+      else
+        string.ljust(longest)
+      end
+    end
+
     def display
       out = []
       out << "Resque connected to: #{Resque.redis_id} (#{Resque.redis.namespace})"
       out << ""
 
       out << "Queues: "
-      longest = Resque.queues.map(&:length).max || 0
+      rows = []
       Resque.queues.each do |queue|
-        out << "  " + queue.ljust(longest) + " | #{Resque.size(queue).to_s.rjust(5)}"
+        rows << [ queue, Resque.size(queue) ]
       end
-      out << "  " + "failed".ljust(longest) + " | #{Resque::Failure.count.to_s.rjust(5)}"
+      rows << [ "failed", Resque::Failure.count ]
+      out.push *(tabular(rows))
+
       out << ""
 
       out << "Workers:"
@@ -44,14 +73,15 @@ module Resque::Top
       workers.each do |worker|
         line = ''
         host, pid, queues = worker.to_s.split(':')
-        line << "  #{host}:#{pid} | #{queues} | "
+        cols = []
+        cols << [ "#{host}:#{pid}", queues ]
         data = worker.processing || {}
         if data['queue']
-          line << "#{data['payload']['class']} (#{data['run_at']})"
+          cols[-1].push "#{data['payload']['class']} (#{data['run_at']})"
         else
-          line << "Waiting for a job...."
+          cols[-1].push "Waiting for a job...."
         end
-        out << line
+        out.push *(tabular(cols))
       end
 
       if workers.empty?
