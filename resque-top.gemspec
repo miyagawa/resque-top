@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Tatsuhiko Miyagawa"]
   s.email       = ["miyagawa@bulknews.net"]
   s.homepage    = "https://github.com/miyagawa/resque-top"
-  s.summary     = s.description
-  s.description = %q{top for Resque}
+  s.summary     = %q{top for Resque}
+  s.description = s.summary
 
   s.rubyforge_project = "resque-top"
 
