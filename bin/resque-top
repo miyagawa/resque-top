@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require 'slop'
+argv = ARGV.dup
+slop = Slop.new :strict => true, :help => true
+slop.banner "Usage: resque-top [options]\n"
+slop.on '-N', :namespace=, 'set the Redis namespace'
+slop.on '-r', :redis=, 'set the Redis connection string'
+
+begin
+  slop.parse! argv
+rescue => e
+  puts e
+  exit!
+end
+
+options = slop.to_hash
+options.delete(:help)
+
+$:.unshift File.dirname(__FILE__) + '/../lib' if $0 == __FILE__
+require 'resque-top'
+Resque::Top::CLI.new(options).run
