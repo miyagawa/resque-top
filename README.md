@@ -9,6 +9,12 @@ resque-top is a top-like command line utility to display resque queue and worker
 
 ## Installation
 
+### rubygems
+
+```
+gem install resque-top
+```
+
 ### github
 
 ```
