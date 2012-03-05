@@ -19,8 +19,7 @@ gem install resque-top
 
 ```
 git clone git://github.com/miyagawa/resque-top.git
-gem build resque-top.gemspec
-gem install resque-top-<version>.gem
+bundle && bundle exec rake install
 ```
 
 ## Usage
